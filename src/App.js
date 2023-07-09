@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-
 import MovieCard from "./MovieCard";
-//import SearchIcon from "./search.svg";
+import {AiOutlineSearch}  from 'react-icons/ai';
+
 import "./App.css";
 
 const API_URL = "http://www.omdbapi.com?apikey=996e0b0b";
@@ -23,7 +23,10 @@ const App = () => {
 
   return (
     <div className="app">
-      <h1>CinemaPlanet</h1>
+    <div className="gradient-div">
+       <h1 className="gradient-border" >CinemaPlanet</h1>
+    </div>
+     
 
       <div className="search">
         <input
@@ -31,14 +34,10 @@ const App = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for movies"
         />
-        <img
-        
-          alt="search"
-          onClick={() => searchMovies(searchTerm)}
-        />
+        <AiOutlineSearch style={{color: 'white', fontSize: '30px',fontWeight: 'bold'}} onClick={() => searchMovies(searchTerm)}/>
       </div>
 
-      {movies?.length > 0 ? (
+      {movies.length > 0 ? (
         <div className="container">
           {movies.map((movie) => (
             <MovieCard movie={movie} />
