@@ -5,51 +5,71 @@ import {AiOutlineSearch}  from 'react-icons/ai';
 import "./App.css";
 
 const API_URL = "http://www.omdbapi.com?apikey=996e0b0b";
+const title = 'interstelar'
+const APIKey = "996e0b0b"
 
-const App = () => {
+export default function App () {
   const [searchTerm, setSearchTerm] = useState("");
   const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
+
+
 
   useEffect(() => {
-    searchMovies("Batman");
-  }, []);
+    async function searchMovies() {
+      setIsLoading(true)
+      const response = await fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=${searchTerm}`);
 
-  const searchMovies = async (title) => {
-    const response = await fetch(`${API_URL}&s=${title}`);
-    const data = await response.json();
+      const data = await response.json();
+      setMovies(data.Search);
+      setIsLoading(false)
+    };
+    searchMovies();  
+  }, [searchTerm]);
 
-    setMovies(data.Search);
-  };
+
 
   return (
-    <div className="app">
+    <>
+   <div className="app">
     <div className="gradient-div">
        <h1 className="gradient-border" >CinemaPlanet</h1>
     </div>
-     
+       <Search 
+         searchTerm={searchTerm} 
+         setSearchTerm={setSearchTerm} 
+         setMovies={setMovies} />
+      {isLoading && <Loader/>}
+      {!isLoading && <MovieList movies={movies} /> }       
+    </div>)
+    </>
+  );
+};
 
-      <div className="search">
+function Search({searchTerm, setSearchTerm}) {
+  return (
+     <div className="search">
         <input
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for movies"
         />
-        <AiOutlineSearch style={{color: 'white', fontSize: '30px',fontWeight: 'bold'}} onClick={() => searchMovies(searchTerm)}/>
+        <AiOutlineSearch style={{color: 'white', fontSize: '30px',fontWeight: 'bold'}} onClick={(e) => setSearchTerm(e.target.value)}/> 
       </div>
+  )
+}
 
-      {movies.length > 0 ? (
-        <div className="container">
-          {movies.map((movie) => (
-            <MovieCard movie={movie} />
+function MovieList({movies}) {
+  return (
+     <div className="container">
+          {movies?.map((movie) => (
+            <MovieCard movie={movie} key={movie.imdbID}/>
           ))}
         </div>
-      ) : (
-        <div className="empty">
-          <h2>No movies found</h2>
-        </div>
-      )}
-    </div>
-  );
-};
+  )
+}
 
-export default App;
+function Loader() {
+    return <h3>Loading ... </h3>
+  } 
+
